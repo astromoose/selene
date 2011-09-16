@@ -4,4 +4,4 @@ java -jar ../lib/selenium-server-standalone*.jar -role webdriver -hub ${huburl} 
 -browser "browserName=safari, maxInstances=3, platform=mac" \
 -browser "browserName=firefox, maxInstances=3, platform=mac" \
 -browser "browserName=chrome, maxInstances=3, platform=mac" \
--Dwebdriver.chrome.driver=../lib/osx/chromedriver
+-Dwebdriver.chrome.driver=../lib/chromedrivers/osx/chromedriver
