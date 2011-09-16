@@ -1,4 +1,4 @@
-huburl='http://localhost:4444/grid/register'
+huburl='http://scalzi.is.localnet:4444/grid/register'
 
 java -jar ../lib/selenium-server-standalone*.jar -role webdriver -hub ${huburl} -port 5555 \
 -browser "browserName=safari, maxInstances=3, platform=osx" \
