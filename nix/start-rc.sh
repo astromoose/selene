@@ -7,3 +7,4 @@ java -jar ../lib/selenium-server-standalone*.jar \
 -role webdriver -hub ${huburl} -port 5555 \
 -browser "browserName=firefox,version=6.0.2,maxInstances=3,platform=LINUX" \
 -browser "browserName=chrome,maxInstances=3,platform=LINUX" \
+-browser "browserName=opera,maxInstances=3,platform=LINUX"
