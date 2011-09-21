@@ -6,7 +6,8 @@ require 'selenium-webdriver'
 require 'awesome_print'
 require 'peach'
 
-hub = 'http://scalzi.is.localnet:4444/wd/hub'
+hubhost = "scalzi.is.localnet"
+hub = "http://#{hubhost}:4444/wd/hub"
 targets = ARGV
 timestamp = Time.now.strftime("%d-%B-%Y-%H%M")
 resultsdir = "./results/#{timestamp}"
@@ -32,7 +33,7 @@ mchr = Selenium::WebDriver::Remote::Capabilities.chrome(:takes_screenshot => tru
 
 browsers = [ wie8, wie9, wff6, wchr, lff3, lff6, lff7, lchr, lopr,  mff6, mchr ]
 
-index.syswrite("<html><head><title>Festival: Results for #{timestamp}</title></head><img src=../../../lib/img/festival.png/>")
+index.syswrite("<html><head><title>Festival: Results for #{timestamp}</title></head><img src=#{hubhost}/assets/festival.png/>")
 index.syswrite("<h2>Urls under test:</h2> <p> <ul>")
 targets.each do |target|
 	index.syswrite("<li><a href=#{target}>#{target}</a></li>")
@@ -43,7 +44,7 @@ targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see
 	index.syswrite("<h3>#{target}</h3>")
 	puts "Testing target url: #{target}"
 
-	browsers.peach do |browser|
+	browsers.each do |browser|
 		begin
 
 		driver = Selenium::WebDriver.for(
