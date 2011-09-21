@@ -60,7 +60,7 @@ targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see
 			if File.exists?("#{resultsdir}/#{target}/#{driver.capabilities.platform}") == false
 				FileUtils.mkdir("#{resultsdir}/#{target}/#{driver.capabilities.platform}")
 			end
-			driver.save_screenshot("./#{resultsdir}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png")
+			driver.save_screenshot("./#{resultsdir}/#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png")
 			driver.quit
 
 		rescue => ex
