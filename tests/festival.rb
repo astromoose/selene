@@ -7,7 +7,7 @@ require 'awesome_print'
 require 'peach'
 
 hub = 'http://scalzi.is.localnet:4444/wd/hub'
-targets = [ 'http://www.bmivisualizer.com' ]
+targets = ARGV
 timestamp = Time.now.strftime("%d-%B-%Y-%H%M")
 resultsdir = "./results/#{timestamp}"
 system ("mkdir -p #{resultsdir}")
@@ -51,11 +51,14 @@ targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see
 			:url => hub,
 			:desired_capabilities => browser
 		)
-			index.syswrite("<p>#{driver.capabilities.browser_name.capitalize}(#{driver.capabilities.version}) on #{driver.capabilities.platform.capitalize}</p><a href='./#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a>")
-			puts "Requested properties: #{driver.capabilities.browser_name.capitalize}(#{driver.capabilities.version}) on #{driver.capabilities.platform.capitalize}."
+			index.syswrite("<p>#{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}</p><a href='./#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a>")
+			puts "Requested properties: #{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}."
  			driver.get target
-			if File.exists?("#{resultsdir}/#{driver.capabilities.platform}") == false
-				FileUtils.mkdir("#{resultsdir}/#{driver.capabilities.platform}")
+			if File.exists?("#{resultsdir}/#{target}") == false
+        FileUtils.mkdir("#{resultsdir}/#{target}")
+      end
+			if File.exists?("#{resultsdir}/#{target}/#{driver.capabilities.platform}") == false
+				FileUtils.mkdir("#{resultsdir}/#{target}/#{driver.capabilities.platform}")
 			end
 			driver.save_screenshot("./#{resultsdir}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png")
 			driver.quit
@@ -69,7 +72,8 @@ targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see
 
 	end
 
+end
+
+# Clean up index.html file.
 index.syswrite("</html>")
 index.close
-
-end
