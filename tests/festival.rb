@@ -51,7 +51,7 @@ project = targets['project']
 baseurl = targets['base']
 urls = targets['urls']
 
-index.syswrite("<html><head><title>Festival: Results for #{timestamp}</title></head><img src=http://#{hubhost}/assets/festival.png />")
+index.syswrite("<html><head><link href=http://#{hubhost}/assets/festival.css rel=stylesheet type=text/css /><title>Festival: Results for #{timestamp}</title></head><img src=http://#{hubhost}/assets/festival.png />")
 index.syswrite("<h2>Results for #{project}</h2> <p> <ul>")
 
 urls.each do |name,url|
