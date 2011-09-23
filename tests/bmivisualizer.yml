@@ -1,0 +1,9 @@
+project: 'BMI Visualizer'
+base: 'http://scalzi.is.localnet:3000' 
+urls: 
+ contact-de: '/de/main/contact' 
+ contact-en: '/en/main/contact' 
+ about-de: '/de/main/about'
+ about-en: '/en/main/about'
+ calc-de: "/body_masses/generate_bmi?utf8=✓&locale=de&body_mass%5Bunit_measurment%5D=M&body_mass%5Bgender%5D=Male&body_mass%5Bage%5D=25&body_mass%5Bheight%5D=1.7&body_mass%5Bfeet%5D=&body_mass%5Binches%5D=&body_mass%5Bweight%5D=65&commit=Errechne+BMI"
+ calc-en: "/body_masses/generate_bmi?utf8=✓&locale=en&body_mass%5Bunit_measurment%5D=M&body_mass%5Bgender%5D=Female&body_mass%5Bage%5D=25&body_mass%5Bheight%5D=1.4&body_mass%5Bfeet%5D=&body_mass%5Binches%5D=&body_mass%5Bweight%5D=50&commit=Calculate+BMI"

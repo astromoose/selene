@@ -1,19 +1,29 @@
-#!/usr/bin/ruby
 #!/Users/jon/.rvm/rubies/ruby-1.9.2-head/bin/ruby
+#!/usr/bin/ruby
 
 require 'rubygems'
 require 'selenium-webdriver'
 require 'awesome_print'
-require 'peach'
+require 'yaml'
 
 hubhost = "scalzi.is.localnet"
 hub = "http://#{hubhost}:4444/wd/hub"
-targets = ARGV
+infile = ARGV[0]
+urls = []
 timestamp = Time.now.strftime("%d-%B-%Y-%H%M")
 resultsdir = "./results/#{timestamp}"
 system ("mkdir -p #{resultsdir}")
 index = File.new("./#{resultsdir}/index.html", "w")
 
+# Grab list of urls from yaml!
+def get_targets(file)
+	File.open(file) { |file| YAML.load(file) }
+end
+
+# Old method of grabbing lines from flatfile
+#File.open(targets, 'r') do |f|
+##	urls = f.readlines
+#end
 
 # Browser defs
 wie6 = Selenium::WebDriver::Remote::Capabilities.ie(:takes_screenshot => true, :version => '6', :platform => 'WINDOWS')
@@ -31,18 +41,31 @@ lopr = Selenium::WebDriver::Remote::Capabilities.opera(:takes_screenshot => true
 mff6 = Selenium::WebDriver::Remote::Capabilities.firefox(:takes_screenshot => true, :platform => 'MAC')
 mchr = Selenium::WebDriver::Remote::Capabilities.chrome(:takes_screenshot => true, :platform => 'MAC')
 
-browsers = [ wie8, wie9, wff6, wchr, lff3, lff6, lff7, lchr, lopr,  mff6, mchr ]
+browsers = [ wie8, wie9, wff6, wchr, lff3, lff6, lff7, lchr, lopr, mff6, mchr ]
+#browsers = [ wie9 ]
 
-index.syswrite("<html><head><title>Festival: Results for #{timestamp}</title></head><img src=#{hubhost}/assets/festival.png/>")
-index.syswrite("<h2>Urls under test:</h2> <p> <ul>")
-targets.each do |target|
-	index.syswrite("<li><a href=#{target}>#{target}</a></li>")
+# Set up baseurl and list of urls to test
+targets = get_targets(infile)
+project = targets['project']
+baseurl = targets['base']
+urls = targets['urls']
+
+index.syswrite("<html><head><title>Festival: Results for #{timestamp}</title></head><img src=http://#{hubhost}/assets/festival.png />")
+index.syswrite("<h2>Results for #{project}</h2> <p> <ul>")
+
+urls.each do |name,url|
+	fullurl = baseurl + url
+	puts "Testing: #{fullurl}"
 end
 
-targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see about queue requests to SGrid
+# Don't forget to close your tags!
+index.syswrite("</ul></p>")
 
-	index.syswrite("<h3>#{target}</h3>")
-	puts "Testing target url: #{target}"
+urls.each do |name,url| # TODO: More Parallelizin' but not too much - early testing with peach led to a messed up grid
+
+	fullurl = baseurl + url
+	index.syswrite("<h3><a href='#{fullurl}'>#{name}</a></h3>")
+	puts "Testing target url: #{fullurl}"
 
 	browsers.each do |browser|
 		begin
@@ -52,20 +75,24 @@ targets.each do |target| # TODO: More Parallelizin' but not too much - maybe see
 			:url => hub,
 			:desired_capabilities => browser
 		)
-			index.syswrite("<p>#{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}</p><a href='./#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a>")
+
+			#TODO: This is fugly, sort it out!
+
+			index.syswrite("<p>#{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}</p><a href='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a>")
 			puts "Requested properties: #{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}."
- 			driver.get target
-			if File.exists?("#{resultsdir}/#{target}") == false
-        FileUtils.mkdir("#{resultsdir}/#{target}")
+ 			driver.get fullurl
+			if File.exists?("#{resultsdir}/#{name}") == false
+        FileUtils.mkdir("#{resultsdir}/#{name}")
       end
-			if File.exists?("#{resultsdir}/#{target}/#{driver.capabilities.platform}") == false
-				FileUtils.mkdir("#{resultsdir}/#{target}/#{driver.capabilities.platform}")
+			if File.exists?("#{resultsdir}/#{name}/#{driver.capabilities.platform}") == false
+				FileUtils.mkdir("#{resultsdir}/#{name}/#{driver.capabilities.platform}")
 			end
-			driver.save_screenshot("./#{resultsdir}/#{target}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png")
+			driver.save_screenshot("./#{resultsdir}/#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png")
 			driver.quit
 
-		rescue => ex
+		rescue => ex  #TODO: Collect all these and stick them at the end of the page, or display them more elegantly than twattily inline
 			puts "#{ex.backtrace}: #{ex.message} (#{ex.class})"
+			index.syswrite("<p>There was an error processing this browser/OS Combination: #{ex.backtrace}: #{ex.message} (#{ex.class})</p>")
 
  	 	next
 
