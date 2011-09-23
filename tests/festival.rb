@@ -41,7 +41,8 @@ lopr = Selenium::WebDriver::Remote::Capabilities.opera(:takes_screenshot => true
 mff6 = Selenium::WebDriver::Remote::Capabilities.firefox(:takes_screenshot => true, :platform => 'MAC')
 mchr = Selenium::WebDriver::Remote::Capabilities.chrome(:takes_screenshot => true, :platform => 'MAC')
 
-browsers = [ wie8, wie9, wff6, wchr, lff3, lff6, lff7, lchr, lopr, mff6, mchr ]
+# Chromedriver is subject to an annoying bug in v14, can't take remote screenshots anymore.
+browsers = [ wie8, wie9, wff6, lff3, lff6, lff7, lopr, mff6, ]
 #browsers = [ wie9 ]
 
 # Set up baseurl and list of urls to test
