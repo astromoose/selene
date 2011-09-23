@@ -1,5 +1,5 @@
-#!/Users/jon/.rvm/rubies/ruby-1.9.2-head/bin/ruby
 #!/usr/bin/ruby
+#!/Users/jon/.rvm/rubies/ruby-1.9.2-head/bin/ruby
 
 require 'rubygems'
 require 'selenium-webdriver'
