@@ -106,3 +106,4 @@ end
 # Clean up index.html file.
 index.syswrite("</html>")
 index.close
+puts "Test results available at: http://#{hubhost}/results/#{timestamp}/"
