@@ -51,8 +51,8 @@ project = targets['project']
 baseurl = targets['base']
 urls = targets['urls']
 
-index.syswrite("<html><head><link href=http://#{hubhost}/assets/festival.css rel=stylesheet type=text/css /><title>Festival: Results for #{timestamp}</title></head><img src=http://#{hubhost}/assets/festival.png />")
-index.syswrite("<h2>Results for #{project}</h2> <p> <ul>")
+index.syswrite("<html><head><link href=http://#{hubhost}/assets/festival.css rel=stylesheet type=text/css /><title>Festival: Results for #{timestamp}</title></head><body><div class=header><img src=http://#{hubhost}/assets/festival.png />")
+index.syswrite("<h2>Results for #{project}</h2>")
 
 urls.each do |name,url|
 	fullurl = baseurl + url
@@ -60,12 +60,13 @@ urls.each do |name,url|
 end
 
 # Don't forget to close your tags!
-index.syswrite("</ul></p>")
+index.syswrite("</div>")
 
 urls.each do |name,url| # TODO: More Parallelizin' but not too much - early testing with peach led to a messed up grid
 
 	fullurl = baseurl + url
-	index.syswrite("<h3><a href='#{fullurl}'>#{name}</a></h3>")
+	index.syswrite("<div class=url><h3><a href='#{fullurl}'>#{name}</a></h3></div>")
+  index.syswrite("<div class=wrapper><div class=spacer></br></div>")
 	puts "Testing target url: #{fullurl}"
 
 	browsers.each do |browser|
@@ -79,7 +80,7 @@ urls.each do |name,url| # TODO: More Parallelizin' but not too much - early test
 
 			#TODO: This is fugly, sort it out!
 
-			index.syswrite("<p>#{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}</p><a href='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a>")
+			index.syswrite("<div class=screenie><p>#{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}</p><a href='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png'><img src='./#{name}/#{driver.capabilities.platform}/#{driver.capabilities.browser_name}(#{driver.capabilities.version}).png' width=300px border=2px></a></div>")
 			puts "Requested properties: #{driver.capabilities.browser_name}(#{driver.capabilities.version}) on #{driver.capabilities.platform}."
  			driver.get fullurl
 			if File.exists?("#{resultsdir}/#{name}") == false
@@ -93,17 +94,18 @@ urls.each do |name,url| # TODO: More Parallelizin' but not too much - early test
 
 		rescue => ex  #TODO: Collect all these and stick them at the end of the page, or display them more elegantly than twattily inline
 			puts "#{ex.backtrace}: #{ex.message} (#{ex.class})"
-			index.syswrite("<p>There was an error processing this browser/OS Combination: #{ex.backtrace}: #{ex.message} (#{ex.class})</p>")
+			index.syswrite("<div class='error'>There was an error processing this browser/OS Combination: #{ex.backtrace}: #{ex.message} (#{ex.class})</div>")
 
  	 	next
 
 		end
+		index.syswrite("<div class=spacer><br></div></div>")
 
 	end
 
 end
 
 # Clean up index.html file.
-index.syswrite("</html>")
+index.syswrite("</div></html>")
 index.close
-puts "Test results available at: http://#{hubhost}/results/#{timestamp}/"
+puts "Test results available at: http://#{hubhost}:8080/job/bmivisualizer/ws/results/#{timestamp}/"
